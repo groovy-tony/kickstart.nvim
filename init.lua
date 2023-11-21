@@ -241,6 +241,7 @@ vim.o.hlsearch = false
 
 -- Make line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -350,7 +351,20 @@ local function live_grep_git_root()
   end
 end
 
+function change_line_numbering()
+  if not vim.wo.number and not vim.wo.relativenumber then
+      vim.wo.number = true
+  elseif vim.wo.number and not vim.wo.relativenumber then
+      vim.wo.relativenumber = true
+  elseif vim.wo.number and vim.wo.relativenumber then
+      vim.wo.number = false
+  else
+      vim.wo.relativenumber = false
+  end
+end
+
 vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
+vim.api.nvim_create_user_command('ChangeLineNumbering' , change_line_numbering, {})
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -371,6 +385,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>N', ':ChangeLineNumbering<cr>', { desc = 'Change [L]ine numbering' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
